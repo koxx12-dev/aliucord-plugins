@@ -8,8 +8,8 @@ buildscript {
         maven("https://jitpack.io")
     }
     dependencies {
-        classpath("com.android.tools.build:gradle:7.0.2")
-        classpath("com.github.Aliucord:gradle:main-SNAPSHOT")
+        classpath("com.android.tools.build:gradle:4.2.0")
+        classpath("com.github.Aliucord:gradle:affe2835a07a8bf6c3ef953204253c0fd505c681")
     }
 }
 
@@ -31,8 +31,8 @@ subprojects {
 
     aliucord {
         author("Koxx12", 378587857796726785L)
-        updateUrl.set("https://raw.githubusercontent.com/USERNAME/REPONAME/builds/updater.json")
-        buildUrl.set("https://raw.githubusercontent.com/USERNAME/REPONAME/builds/%s.zip")
+        updateUrl.set("https://raw.githubusercontent.com/koxx12-dev/aliucord-plugins/builds/updater.json")
+        buildUrl.set("https://raw.githubusercontent.com/koxx12-dev/aliucord-plugins/builds/%s.zip")
     }
 
     android {

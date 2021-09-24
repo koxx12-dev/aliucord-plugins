@@ -1,5 +1,3 @@
-
-include(":ScamDetector")
-project(":ScamDetector").projectDir = File("./ScamDetector")
+include("ScamDetector")
 
 rootProject.name = "AliucordPlugins"

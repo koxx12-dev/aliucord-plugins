@@ -1,4 +1,4 @@
-package com.aliucord.plugins;
+package io.github.koxx12dev.plugins.scamdetector;
 
 // Import several packages such as Aliucord's CommandApi and the Plugin class
 import android.content.Context;
@@ -12,7 +12,7 @@ import java.util.Collections;
 // This class is never used so your IDE will likely complain. Let's make it shut up!
 @SuppressWarnings("unused")
 @AliucordPlugin
-public class HelloWorld extends Plugin {
+public class ScamDetector extends Plugin {
     @Override
     // Called when your plugin is started. This is the place to register command, add patches, etc
     public void start(Context context) {
