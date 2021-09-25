@@ -3,9 +3,11 @@ package io.github.koxx12dev.plugins.scamdetector;
 // Import several packages such as Aliucord's CommandApi and the Plugin class
 import android.content.Context;
 
+import androidx.core.app.NotificationCompat;
 import com.aliucord.annotations.AliucordPlugin;
-import com.aliucord.api.CommandsAPI;
+import com.discord.R;
 import com.aliucord.entities.Plugin;
+import com.discord.utilities.fcm.NotificationRenderer;
 
 import java.util.Collections;
 
@@ -17,13 +19,14 @@ public class ScamDetector extends Plugin {
     // Called when your plugin is started. This is the place to register command, add patches, etc
     public void start(Context context) {
         // Registers a command with the name hello, the description "Say hello to the world" and no options
-        commands.registerCommand(
-                "hello",
-                "Say hello to the world",
-                Collections.emptyList(),
-                // Return a command result with Hello World! as the content, no embeds and send set to false
-                ctx -> new CommandsAPI.CommandResult("Hello World!", null, false)
-        );
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context,"notificationChannel")
+                .setSmallIcon(2131231850)
+                .setContentTitle("title")
+                .setContentText("text")
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+        NotificationRenderer.access$displayNotification(null,context,10,builder);
     }
 
     @Override
