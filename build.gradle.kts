@@ -1,5 +1,6 @@
 import com.aliucord.gradle.AliucordExtension
 import com.android.build.gradle.BaseExtension
+import com.android.build.api.dsl.SdkComponents
 
 buildscript {
     repositories {
@@ -8,8 +9,8 @@ buildscript {
         maven("https://jitpack.io")
     }
     dependencies {
-        classpath("com.android.tools.build:gradle:4.2.0")
-        classpath("com.github.Aliucord:gradle:affe2835a07a8bf6c3ef953204253c0fd505c681")
+        classpath("com.android.tools.build:gradle:4.2.2")
+        classpath("com.github.Aliucord:gradle:main-SNAPSHOT")
     }
 }
 
@@ -59,6 +60,12 @@ subprojects {
         implementation("androidx.appcompat:appcompat:1.3.1")
         implementation("com.google.android.material:material:1.4.0")
         implementation("androidx.constraintlayout:constraintlayout:2.1.0")
+
+        if (System.getProperty("os.name").toLowerCase().contains("windows")) {
+            implementation(files(System.getProperty("user.home")+"/AppData/Local/Android/sdk/platforms/android-30/android.jar"))
+        } else {
+            implementation(files(System.getProperty("user.home")+"/Android/Sdk/platforms/android-30/android.jar"))
+        }
     }
 }
 
