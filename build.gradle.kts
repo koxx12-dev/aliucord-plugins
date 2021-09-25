@@ -64,7 +64,7 @@ subprojects {
         if (System.getProperty("os.name").toLowerCase().contains("windows")) {
             implementation(files(System.getProperty("user.home")+"/AppData/Local/Android/sdk/platforms/android-30/android.jar"))
         } else {
-            implementation(files(System.getProperty("user.home")+"/.android/sdk/platforms/android-30/android.jar"))
+            implementation(files("/usr/local/lib/android/sdk/platforms/android-30/android.jar"))
         }
     }
 }
