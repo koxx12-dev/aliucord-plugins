@@ -6,11 +6,7 @@ import android.content.Context;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import com.aliucord.annotations.AliucordPlugin;
-import com.discord.R;
 import com.aliucord.entities.Plugin;
-import com.discord.utilities.fcm.NotificationRenderer;
-
-import java.util.Collections;
 
 // This class is never used so your IDE will likely complain. Let's make it shut up!
 @SuppressWarnings("unused")
@@ -23,15 +19,23 @@ public class ScamDetector extends Plugin {
     public void start(Context context) {
         // Registers a command with the name hello, the description "Say hello to the world" and no options
 
+        System.out.println("test 1");
+
         notificationManager = NotificationManagerCompat.from(context);
 
+        System.out.println("test 2");
+
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context,"notificationChannel")
-                .setSmallIcon(2131231850)
+                .setSmallIcon(android.R.drawable.ic_menu_search)
                 .setContentTitle("title")
                 .setContentText("text")
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
+        System.out.println("test 3");
+
         notificationManager.notify(123345678,builder.build());
+
+        System.out.println("test 4");
 
     }
 
