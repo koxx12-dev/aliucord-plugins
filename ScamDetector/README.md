@@ -1,3 +1,3 @@
-# Hello World
+# ScamDetector
 
-Adds a simple /hello slash command that will respond with "Hello World!"
+Shows a popup when a scam message it detected
