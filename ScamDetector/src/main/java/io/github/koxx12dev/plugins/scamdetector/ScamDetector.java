@@ -191,12 +191,14 @@ public class ScamDetector extends Plugin {
 
     public void sendWebhookMessage(Message msg) throws IOException {
 
-        String CurrUser = StoreStream.getUsers().getMe().getUsername();
-        long AuthorUserID = msg.e().i();
-        String Content = msg.i();
-        String body = "{\"content\": null,\"embeds\": [{\"title\": \"Possible scam message detected!\",\"color\": 9645823,\"fields\": [{\"name\": \"User\",\"value\": \"`" + AuthorUserID + "`\"},{\"name\": \"Message\",\"value\": \"`" + Content + "`\"}],\"footer\": {\"text\": \"Sent using ScamDetector by koxx12\" }}],\"username\": \"Scam Detected Webhook (User: " + CurrUser + ")\"}";
+        String currUser = StoreStream.getUsers().getMe().getUsername();
+        long authorUserID = msg.e().i();
+        String content = msg.i().replaceAll("\n","\\\\n");
+        String body = "{\"content\": null,\"embeds\": [{\"title\": \"Possible scam message detected!\",\"color\": 9645823,\"fields\": [{\"name\": \"User\",\"value\": \"`" + authorUserID + "`\"},{\"name\": \"Message\",\"value\": \"`" + content + "`\"}],\"footer\": {\"text\": \"Sent using ScamDetector by koxx12\" }}],\"username\": \"Scam Detected Webhook (User: " + currUser + ")\"}";
 
-        new Http.Request(settings.getString("webhook", null), "POST").setHeader("Content-Type", "application/json").executeWithBody(body);
+        Http.Response req = new Http.Request(settings.getString("webhook", null), "POST").setHeader("Content-Type", "application/json").executeWithBody(body);
+
+        LOGGER.debug(req.statusCode+"|"+req.statusMessage+"|"+content);
 
     }
 }
