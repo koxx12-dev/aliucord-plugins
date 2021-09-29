@@ -97,7 +97,7 @@ public class ScamDetector extends Plugin {
             if (Objects.equals(type, "MESSAGE_CREATE") && obj != null) {
                 Message msg = (Message) obj;
                 String content = msg.i().toLowerCase();
-                if (content.contains("free") && content.contains("nitro") && content.contains("http") && !content.matches("[0-9]+\\|`(?s:.)*`(\\|[0-9.]+)?") && msg.e().i() != StoreStream.getUsers().getMe().getId()) {
+                if (content.contains("free") && content.contains("nitro") && content.contains("http") && content.contains("discord") && !content.matches("[0-9]+\\|`(?s:.)*`(\\|[0-9.]+)?") && msg.e().i() != StoreStream.getUsers().getMe().getId()) {
                     if (settings.getBool("showPopups", true)) {
                         notifScamInApp(msg);
                     }
