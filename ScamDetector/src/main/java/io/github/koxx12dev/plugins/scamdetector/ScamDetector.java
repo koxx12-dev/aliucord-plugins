@@ -20,12 +20,21 @@ import com.aliucord.api.NotificationsAPI;
 import com.aliucord.entities.NotificationData;
 import com.aliucord.entities.Plugin;
 import com.aliucord.patcher.PinePrePatchFn;
+import com.aliucord.utils.GsonUtils;
+import com.aliucord.utils.IOUtils;
 import com.discord.api.message.Message;
 import com.discord.app.AppActivity;
 import com.discord.stores.StoreGatewayConnection;
 import com.discord.stores.StoreStream;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.lytefast.flexinput.R;
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
@@ -98,7 +107,7 @@ public class ScamDetector extends Plugin {
                     if (settings.getString("webhook", null) != null) {
                         try {
                             sendWebhookMessage(msg);
-                        } catch (IOException e) {
+                        } catch (IOException | JSONException e) {
                             e.printStackTrace();
                         }
                     }
@@ -189,16 +198,70 @@ public class ScamDetector extends Plugin {
         notificationManager.createNotificationChannel(channel);
     }
 
-    public void sendWebhookMessage(Message msg) throws IOException {
+    public void sendWebhookMessage(Message msg) throws IOException, JSONException {
 
-        String currUser = StoreStream.getUsers().getMe().getUsername();
-        long authorUserID = msg.e().i();
-        String content = msg.i().replaceAll("\n","\\\\n");
-        String body = "{\"content\": null,\"embeds\": [{\"title\": \"Possible scam message detected!\",\"color\": 9645823,\"fields\": [{\"name\": \"User\",\"value\": \"`" + authorUserID + "`\"},{\"name\": \"Message\",\"value\": \"`" + content + "`\"}],\"footer\": {\"text\": \"Sent using ScamDetector by koxx12\" }}],\"username\": \"Scam Detected Webhook (User: " + currUser + ")\"}";
+        String content = msg.i();
+
+        String body = generateEmbed(msg);
 
         Http.Response req = new Http.Request(settings.getString("webhook", null), "POST").setHeader("Content-Type", "application/json").executeWithBody(body);
 
         LOGGER.debug(req.statusCode+"|"+req.statusMessage+"|"+content);
 
+        if (req.statusCode == 400) {
+            LOGGER.debug(body);
+        }
+
+        //"{\"content\": null,\"embeds\": [{\"title\": \"Possible scam message detected!\",\"color\": 9645823,\"fields\": [{\"name\": \"User\",\"value\": \"`authorUserID`\"},{\"name\": \"Message\",\"value\": \"`content`\"}],\"footer\": {\"text\": \"Sent using ScamDetector by koxx12\" }}],\"username\": \"Scam Detected Webhook (User: currUser)\"}"
+
+
+
     }
+
+    public String generateEmbed(Message msg) throws JSONException {
+
+        String currUser = StoreStream.getUsers().getMe().getUsername();
+        long authorUserID = msg.e().i();
+        String content = msg.i();
+
+        JSONObject json = new JSONObject();
+
+        json.put("content",null);
+        json.put("username","Scam Detected Webhook (User: "+currUser+")");
+
+        JSONArray embeds = new JSONArray();
+
+        JSONObject embed1 = new JSONObject();
+
+        embed1.put("title","Possible scam message detected!");
+        embed1.put("color",9645823);
+
+        JSONObject footer = new JSONObject();
+
+        footer.put("text","Sent using ScamDetector by koxx12");
+
+        embed1.put("footer",footer);
+
+        JSONArray fields = new JSONArray();
+        JSONObject field1 = new JSONObject();
+        JSONObject field2 = new JSONObject();
+
+        field1.put("name","User");
+        field1.put("value","`"+authorUserID+"`");
+
+        field2.put("name","Message");
+        field2.put("value","`"+content+"`");
+
+        fields.put(field1);
+        fields.put(field2);
+
+        embed1.put("fields",fields);
+
+        embeds.put(embed1);
+
+        json.put("embeds",embeds);
+
+        return json.toString();
+    }
+
 }
