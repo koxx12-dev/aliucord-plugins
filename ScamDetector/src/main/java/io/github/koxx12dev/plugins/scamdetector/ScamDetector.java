@@ -58,18 +58,6 @@ public class ScamDetector extends Plugin {
         settingsTab = new SettingsTab(PluginSettings.class).withArgs(settings);
     }
 
-    @NonNull
-    @NotNull
-    @Override
-    public Manifest getManifest() {
-        var manifest = new Manifest();
-        manifest.authors = new Manifest.Author[]{new Manifest.Author("koxx12", 378587857796726785L)};
-        manifest.description = "Scam Detector for Aliucord. Show popups about possible scam messages.";
-        manifest.version = "1.0.0";
-        manifest.updateUrl = "https://raw.githubusercontent.com/koxx12-dev/aliucord-plugins/builds/updater.json";
-        return manifest;
-    }
-
     @Override
     public void start(Context context) throws NoSuchMethodException {
 
@@ -97,7 +85,7 @@ public class ScamDetector extends Plugin {
             if (Objects.equals(type, "MESSAGE_CREATE") && obj != null) {
                 Message msg = (Message) obj;
                 String content = msg.i().toLowerCase();
-                if (!msg.e().e() && content.contains("free") && content.contains("nitro") && content.contains("http") && content.contains("discord") && !content.matches("[0-9]+\\|`(?s:.)*`(\\|[0-9.]+)?") && msg.e().i() != StoreStream.getUsers().getMe().getId()) {
+                if (!Objects.equals(msg.e().e(),true) && content.contains("free") && content.contains("nitro") && content.contains("http") && content.contains("discord") && !content.matches("[0-9]+\\|`(?s:.)*`(\\|[0-9.]+)?") && msg.e().i() != StoreStream.getUsers().getMe().getId()) {
                     if (settings.getBool("showPopups", true)) {
                         notifScamInApp(msg);
                     }
