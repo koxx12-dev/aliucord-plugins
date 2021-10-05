@@ -1,1 +1,1 @@
-{"ScamDetector":{"minimumDiscordVersion":89108,"version":"1.0.1","build":"https://raw.githubusercontent.com/koxx12-dev/aliucord-plugins/builds/%s.zip","changelog":"# Version 1.0.0\n- Initial release\n# Version 1.0.1\n- Fixed the bot detection breaking the whole code"}}
+{"ScamDetector":{"minimumDiscordVersion":89108,"version":"1.0.2","build":"https://raw.githubusercontent.com/koxx12-dev/aliucord-plugins/builds/%s.zip","changelog":"# Version 1.0.0\n- Initial release\n# Version 1.0.1\n- Fixed the bot detection breaking the whole code\n# Version 1.0.2\n- Reduced spam"}}
