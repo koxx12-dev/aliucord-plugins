@@ -39,6 +39,8 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
@@ -53,6 +55,7 @@ public class ScamDetector extends Plugin {
     private Context context;
     private NotificationManagerCompat notificationManager;
     private Boolean isPaused = true;
+    private List<String> blacklist = new ArrayList<>();
 
     public ScamDetector() {
         settingsTab = new SettingsTab(PluginSettings.class).withArgs(settings);
@@ -85,7 +88,8 @@ public class ScamDetector extends Plugin {
             if (Objects.equals(type, "MESSAGE_CREATE") && obj != null) {
                 Message msg = (Message) obj;
                 String content = msg.i().toLowerCase();
-                if (!Objects.equals(msg.e().e(),true) && content.contains("free") && content.contains("nitro") && content.contains("http") && content.contains("discord") && !content.matches("[0-9]+\\|`(?s:.)*`(\\|[0-9.]+)?") && msg.e().i() != StoreStream.getUsers().getMe().getId()) {
+                if (!Objects.equals(msg.e().e(),true) && content.contains("free") && content.contains("nitro") && content.contains("http") && content.contains("discord") && !content.matches("[0-9]+\\|`(?s:.)*`(\\|[0-9.]+)?") && msg.e().i() != StoreStream.getUsers().getMe().getId() && !blacklist.contains(msg.e().i()+"|"+content)) {
+                    blacklist.add(msg.e().i()+"|"+content);
                     if (settings.getBool("showPopups", true)) {
                         notifScamInApp(msg);
                     }
