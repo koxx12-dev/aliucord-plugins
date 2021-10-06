@@ -1,4 +1,4 @@
-version = "1.0.2"
+version = "1.0.3"
 description = "Scam Detector for Aliucord. Show popups about possible scam messages."
 aliucord.changelog.set("""
     # Version 1.0.0
