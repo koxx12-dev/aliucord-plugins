@@ -301,7 +301,7 @@ public class ScamDetector extends Plugin {
         Matcher matcher = urlRegex.matcher(message);
 
         if (matcher.find()) {
-            return matcher.group(0);
+            return matcher.group(1);
         } else {
             return "failed";
         }
