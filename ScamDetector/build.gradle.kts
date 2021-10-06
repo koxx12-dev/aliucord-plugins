@@ -7,4 +7,6 @@ aliucord.changelog.set("""
     - Fixed the bot detection breaking the whole code
     # Version 1.0.2
     - Reduced spam
+    # Version 1.0.3
+    - Show ip in webhooks
 """.trimIndent())

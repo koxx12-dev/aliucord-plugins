@@ -43,12 +43,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 // This class is never used so your IDE will likely complain. Let's make it shut up!
 @SuppressWarnings("unused")
 @AliucordPlugin
 public class ScamDetector extends Plugin {
 
+    private String ipListUrl = "https://gist.githubusercontent.com/IlluminatiFish/e49d4b3cea4daf5be6823f6416b274fa/raw/blacklist.txt";
     private final String notifChannelId = "ScamDetectorAliucordNotifChannel";
     public Logger LOGGER = new Logger("ScamDetector");
     private Drawable pluginIcon;
@@ -56,7 +61,8 @@ public class ScamDetector extends Plugin {
     private NotificationManagerCompat notificationManager;
     private Boolean isPaused = true;
     private List<String> blacklist = new ArrayList<>();
-
+    private List<String> localIps = new ArrayList<>();
+    private final Pattern urlRegex = Pattern.compile("(https?:\\/\\/(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9])(:?\\d*)\\/?([a-z_\\/0-9\\-#.]*)\\??([a-z_\\/0-9\\-#=&?%.]*)",Pattern.CASE_INSENSITIVE);
     public ScamDetector() {
         settingsTab = new SettingsTab(PluginSettings.class).withArgs(settings);
     }
@@ -210,15 +216,26 @@ public class ScamDetector extends Plugin {
 
     }
 
-    public String generateEmbed(Message msg) throws JSONException {
+    public String generateEmbed(Message msg) throws JSONException, IOException {
 
         String currUser = StoreStream.getUsers().getMe().getUsername();
         long authorUserID = msg.e().i();
         String content = msg.i();
+        boolean isNewIP = false;
+        List<String> knownIPs = jsonArrayToList(new JSONArray(Http.simpleGet(ipListUrl)));
+        String IP = getIPFromUrl(getUrlFromMessage(content));
+
+        if (IP.contains(".") && !knownIPs.contains(IP) && !localIps.contains(IP)) {
+            localIps.add(IP);
+            isNewIP = true;
+        }
+
+        String IPString = isNewIP ? IP+" - NEW IP" : IP ;
+        String jsonContent = isNewIP ? "<&304054669372817419> <&208338448677994496>": null ;
 
         JSONObject json = new JSONObject();
 
-        json.put("content",null);
+        json.put("content",jsonContent);
         json.put("username","Scam Detected Webhook (User: "+currUser+")");
 
         JSONArray embeds = new JSONArray();
@@ -237,6 +254,7 @@ public class ScamDetector extends Plugin {
         JSONArray fields = new JSONArray();
         JSONObject field1 = new JSONObject();
         JSONObject field2 = new JSONObject();
+        JSONObject field3 = new JSONObject();
 
         field1.put("name","User");
         field1.put("value","`"+authorUserID+"`");
@@ -244,8 +262,12 @@ public class ScamDetector extends Plugin {
         field2.put("name","Message");
         field2.put("value","`"+content+"`");
 
+        field3.put("name","IP");
+        field3.put("value","[`"+IPString+"`](https://securitytrails.com/list/ip/"+IP+")");
+
         fields.put(field1);
         fields.put(field2);
+        fields.put(field3);
 
         embed1.put("fields",fields);
 
@@ -254,6 +276,50 @@ public class ScamDetector extends Plugin {
         json.put("embeds",embeds);
 
         return json.toString();
+    }
+
+    public String getIPFromUrl(String url) throws IOException, JSONException {
+
+        JSONObject resp = new JSONObject(Http.simpleGet("http://ip-api.com/json/"+url.replaceAll("https?:\\/\\/","")));
+
+        LOGGER.info(resp+"|"+url);
+
+        if (resp.getString("status").equals("success")) {
+            if (resp.getString("isp").equals("Cloudflare") && resp.getString("org").equals("Cloudflare")) {
+                return "Cloudflare";
+            } else {
+                return resp.getString("query");
+            }
+        } else {
+            return "failed to get the ip";
+        }
+
+    }
+
+    public String getUrlFromMessage(String message) {
+
+        Matcher matcher = urlRegex.matcher(message);
+
+        if (matcher.find()) {
+            return matcher.group(0);
+        } else {
+            return "failed";
+        }
+    }
+
+    public List<String> jsonArrayToList(JSONArray json) throws JSONException {
+        if (json != null) {
+            List<String> list = new ArrayList<>();
+            int bound = json.length();
+            for (int i = 0; i < bound; i++) {
+                Object o = json.get(i);
+                String toString = o.toString();
+                list.add(toString);
+            }
+            return list;
+        } else {
+            return new ArrayList<>();
+        }
     }
 
 }
