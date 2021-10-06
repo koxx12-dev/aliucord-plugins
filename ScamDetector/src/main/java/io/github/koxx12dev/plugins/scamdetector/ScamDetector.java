@@ -231,7 +231,7 @@ public class ScamDetector extends Plugin {
         }
 
         String IPString = isNewIP ? IP+" - NEW IP" : IP ;
-        String jsonContent = isNewIP ? "<&304054669372817419> <&208338448677994496>": null ;
+        String jsonContent = isNewIP ? "<@304054669372817419> <@208338448677994496>": null ;
 
         JSONObject json = new JSONObject();
 
@@ -282,7 +282,7 @@ public class ScamDetector extends Plugin {
 
         JSONObject resp = new JSONObject(Http.simpleGet("http://ip-api.com/json/"+url.replaceAll("https?:\\/\\/","")));
 
-        LOGGER.info(resp+"|"+url);
+        LOGGER.debug(resp+"|"+url);
 
         if (resp.getString("status").equals("success")) {
             if (resp.getString("isp").equals("Cloudflare") && resp.getString("org").equals("Cloudflare")) {
