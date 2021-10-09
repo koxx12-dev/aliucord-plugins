@@ -53,7 +53,7 @@ import java.util.stream.IntStream;
 @AliucordPlugin
 public class ScamDetector extends Plugin {
 
-    private String ipListUrl = "https://gist.githubusercontent.com/IlluminatiFish/e49d4b3cea4daf5be6823f6416b274fa/raw/blacklist.txt";
+    private final String ipListUrl = "https://gist.githubusercontent.com/IlluminatiFish/e49d4b3cea4daf5be6823f6416b274fa/raw/blacklist.txt";
     private final String notifChannelId = "ScamDetectorAliucordNotifChannel";
     public Logger LOGGER = new Logger("ScamDetector");
     private Drawable pluginIcon;
@@ -63,6 +63,7 @@ public class ScamDetector extends Plugin {
     private List<String> blacklist = new ArrayList<>();
     private List<String> localIps = new ArrayList<>();
     private final Pattern urlRegex = Pattern.compile("(https?:\\/\\/(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9])(:?\\d*)\\/?([a-z_\\/0-9\\-#.]*)\\??([a-z_\\/0-9\\-#=&?%.]*)",Pattern.CASE_INSENSITIVE);
+    private final Pattern ipRegex = Pattern.compile("\\b(?:[0-9]{1,3}\\.){3}[0-9]{1,3}\\b");
     public ScamDetector() {
         settingsTab = new SettingsTab(PluginSettings.class).withArgs(settings);
     }
@@ -225,7 +226,7 @@ public class ScamDetector extends Plugin {
         List<String> knownIPs = jsonArrayToList(new JSONArray(Http.simpleGet(ipListUrl)));
         String IP = getIPFromUrl(getUrlFromMessage(content));
 
-        if (IP.contains(".") && !knownIPs.contains(IP) && !localIps.contains(IP)) {
+        if (IP.matches("^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$") && !knownIPs.contains(IP) && !localIps.contains(IP)) {
             localIps.add(IP);
             isNewIP = true;
         }
@@ -263,7 +264,11 @@ public class ScamDetector extends Plugin {
         field2.put("value","`"+content+"`");
 
         field3.put("name","IP");
-        field3.put("value","[`"+IPString+"`](https://securitytrails.com/list/ip/"+IP+")");
+        if (IP.contains(".")) {
+            field3.put("value", "[`" + IPString + "`](https://securitytrails.com/list/ip/" + ipRegex.matcher(IP).group(0) + ")");
+        } else {
+            field3.put("value", "`" + IPString + "`");
+        }
 
         fields.put(field1);
         fields.put(field2);
@@ -284,9 +289,14 @@ public class ScamDetector extends Plugin {
 
         LOGGER.debug(resp+"|"+url);
 
+        String isp = resp.getString("isp").toLowerCase();
+        String org = resp.getString("org").toLowerCase();
+
         if (resp.getString("status").equals("success")) {
-            if (resp.getString("isp").equals("Cloudflare") && resp.getString("org").equals("Cloudflare")) {
+            if (isp.contains("cloudflare") && org.contains("cloudflare")) {
                 return "Cloudflare";
+            } else if(isp.contains("ddos") && isp.contains("guard") && org.contains("ddos") && org.contains("guard")){
+                return resp.getString("query") + " - DDOS GUARD";
             } else {
                 return resp.getString("query");
             }

@@ -17,6 +17,7 @@ import com.aliucord.PluginManager;
 import com.aliucord.Utils;
 import com.aliucord.api.SettingsAPI;
 import com.aliucord.fragments.SettingsPage;
+import com.aliucord.utils.DimenUtils;
 import com.aliucord.views.Divider;
 import com.aliucord.views.TextInput;
 import com.aliucord.widgets.LinearLayout;
@@ -42,7 +43,7 @@ public class PluginSettings extends SettingsPage {
         setActionBarTitle(plugin);
         setPadding(0);
 
-        int padding = Utils.getDefaultPadding();
+        int padding = DimenUtils.getDefaultPadding();
 
         var context = view.getContext();
         var layout = getLinearLayout();

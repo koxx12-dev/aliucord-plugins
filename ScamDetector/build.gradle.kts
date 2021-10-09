@@ -1,4 +1,4 @@
-version = "1.0.5"
+version = "1.0.6"
 description = "Scam Detector for Aliucord. Show popups about possible scam messages."
 aliucord.changelog.set("""
     # Version 1.0.0
@@ -13,4 +13,6 @@ aliucord.changelog.set("""
     - Ignore url path
     # Version 1.0.5
     - Fixed Ping
+    # Version 1.0.6
+    - DDOS GUARD warning
 """.trimIndent())
