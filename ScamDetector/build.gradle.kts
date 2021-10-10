@@ -1,4 +1,4 @@
-version = "1.0.6"
+version = "1.0.7"
 description = "Scam Detector for Aliucord. Show popups about possible scam messages."
 aliucord.changelog.set("""
     # Version 1.0.0
@@ -15,4 +15,6 @@ aliucord.changelog.set("""
     - Fixed Ping
     # Version 1.0.6
     - DDOS GUARD warning
+    # Version 1.0.7
+    - Fixed last upadate breaking the whole plugin
 """.trimIndent())

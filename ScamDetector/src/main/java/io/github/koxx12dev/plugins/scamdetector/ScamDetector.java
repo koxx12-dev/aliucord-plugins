@@ -225,6 +225,7 @@ public class ScamDetector extends Plugin {
         boolean isNewIP = false;
         List<String> knownIPs = jsonArrayToList(new JSONArray(Http.simpleGet(ipListUrl)));
         String IP = getIPFromUrl(getUrlFromMessage(content));
+        Matcher ipRegexMatcher = ipRegex.matcher(IP);
 
         if (IP.matches("^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$") && !knownIPs.contains(IP) && !localIps.contains(IP)) {
             localIps.add(IP);
@@ -264,8 +265,8 @@ public class ScamDetector extends Plugin {
         field2.put("value","`"+content+"`");
 
         field3.put("name","IP");
-        if (IP.contains(".")) {
-            field3.put("value", "[`" + IPString + "`](https://securitytrails.com/list/ip/" + ipRegex.matcher(IP).group(0) + ")");
+        if (IP.contains(".") && ipRegexMatcher.find()) {
+            field3.put("value", "[`" + IPString + "`](https://securitytrails.com/list/ip/" + ipRegexMatcher.group(0) + ")");
         } else {
             field3.put("value", "`" + IPString + "`");
         }
